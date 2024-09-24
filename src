@@ -1,0 +1,113 @@
+-- Criação do banco de dados
+DROP DATABASE IF EXISTS gerenciamento_eventos;
+CREATE DATABASE gerenciamento_eventos;
+
+-- Seleção do banco de dados
+USE gerenciamento_eventos;
+
+-- Criação da tabela de locais
+CREATE TABLE locais (
+  local_id INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100),
+  endereco VARCHAR(255),
+  capacidade INT
+);
+
+-- Criação da tabela de eventos
+CREATE TABLE eventos (
+  evento_id INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100),
+  data_evento DATE,
+  horario TIME,
+  local_id INT,
+  descricao TEXT,
+  FOREIGN KEY (local_id) REFERENCES locais(local_id)
+);
+
+-- Criação da tabela de participantes
+CREATE TABLE participantes (
+  participante_id INT PRIMARY KEY AUTO_INCREMENT,
+  nome VARCHAR(100),
+  email VARCHAR(100),
+  telefone VARCHAR(20)
+);
+
+-- Criação da tabela de inscrições
+CREATE TABLE inscricoes (
+  inscricao_id INT PRIMARY KEY AUTO_INCREMENT,
+  evento_id INT,
+  participante_id INT,
+  data_inscricao DATE,
+  FOREIGN KEY (evento_id) REFERENCES eventos(evento_id),
+  FOREIGN KEY (participante_id) REFERENCES participantes(participante_id)
+);
+
+-- Inserção de dados na tabela de locais
+INSERT INTO locais (nome, endereco, capacidade) VALUES
+('Auditório Central', 'Rua Principal, 123', 500),
+('Sala de Conferências', 'Avenida Secundária, 456', 100),
+('Centro de Convenções', 'Praça das Flores, 789', 1000);
+
+-- Inserção de dados na tabela de eventos
+INSERT INTO eventos (nome, data_evento, horario, local_id, descricao) VALUES
+('Conferência de Tecnologia', '2024-11-10', '09:00:00', 1, 'Discussões sobre novas tendências em tecnologia.'),
+('Workshop de Marketing Digital', '2024-12-05', '14:00:00', 2, 'Técnicas e estratégias de marketing no ambiente digital.'),
+('Feira de Inovação', '2025-01-20', '10:00:00', 3, 'Exposição de inovações em diferentes áreas.');
+
+-- Inserção de dados na tabela de participantes
+INSERT INTO participantes (nome, email, telefone) VALUES
+('Lucas Almeida', 'lucas@email.com', '11999999999'),
+('Fernanda Costa', 'fernanda@email.com', '11988888888'),
+('João Pereira', 'joao@email.com', '11977777777');
+
+-- Inserção de dados na tabela de inscrições
+INSERT INTO inscricoes (evento_id, participante_id, data_inscricao) VALUES
+(1, 1, '2024-10-01'),
+(2, 2, '2024-11-15'),
+(3, 3, '2025-01-05');
+
+-- Consulta para exibir todos os eventos com seus respectivos locais
+SELECT 
+  eventos.nome AS evento,
+  eventos.data_evento,
+  eventos.horario,
+  locais.nome AS local,
+  locais.endereco,
+  locais.capacidade
+FROM eventos
+JOIN locais ON eventos.local_id = locais.local_id;
+
+-- Consulta para exibir todos os participantes inscritos em um determinado evento
+SELECT 
+  eventos.nome AS evento,
+  participantes.nome AS participante,
+  participantes.email,
+  inscricoes.data_inscricao
+FROM inscricoes
+JOIN eventos ON inscricoes.evento_id = eventos.evento_id
+JOIN participantes ON inscricoes.participante_id = participantes.participante_id
+WHERE eventos.evento_id = 1;
+
+-- Consulta para exibir todos os eventos e a quantidade de participantes inscritos em cada um
+SELECT 
+  eventos.nome AS evento,
+  COUNT(inscricoes.participante_id) AS total_participantes
+FROM eventos
+LEFT JOIN inscricoes ON eventos.evento_id = inscricoes.evento_id
+GROUP BY eventos.nome;
+
+-- Atualização da capacidade de um local
+UPDATE locais
+SET capacidade = 600
+WHERE local_id = 1;
+
+-- Exclusão de uma inscrição
+DELETE FROM inscricoes
+WHERE inscricao_id = 1;
+
+-- Exclusão de um evento e suas inscrições relacionadas
+DELETE FROM inscricoes 
+WHERE evento_id = 2;
+
+DELETE FROM eventos
+WHERE evento_id = 2;
