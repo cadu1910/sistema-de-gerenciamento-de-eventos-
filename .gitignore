@@ -1,0 +1,22 @@
+# Banco de dados e arquivos temporários
+*.sql
+*.db
+*.sqlite
+*.log
+
+# Arquivos de backup
+*.bak
+*.tmp
+
+# Configurações do ambiente de desenvolvimento
+.vscode/
+.idea/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Dependências geradas
+node_modules/
+venv/
+.env
