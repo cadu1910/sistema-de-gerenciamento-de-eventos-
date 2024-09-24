@@ -1,0 +1,10 @@
+SELECT 
+  eventos.nome AS evento,
+  eventos.data_evento,
+  eventos.horario,
+  locais.nome AS local,
+  locais.endereco,
+  locais.capacidade
+FROM eventos
+JOIN locais ON eventos.local_id = locais.local_id;
+
